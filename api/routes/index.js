@@ -1,16 +1,14 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-const userRoute = require('../routes/users');
+const userRoute = require('./users');
 
-router.get('/', async (requestAnimationFrame, res) => {
-  res.status(200).json({
-    name : process.env.APP_NAME,
-    version : "1.0",
-    status : 200,
-    message : "Port de Plaisance Russel"
+router.get('/', (req, res) => {
+  console.log("Route / appelée");
+  res.render('index', {
+    title: 'Accueil'
   });
-});
+})
 
 router.use('/users', userRoute);
 
