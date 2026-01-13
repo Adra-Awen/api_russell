@@ -28,14 +28,9 @@ const User = new Schema({
     timestamps : true
 });
 
-User.pre('save', function(next) {
-    if (!this.isModified('password')) { 
-        return next();
-    }
-
-    this.password = bcrypt.hashSync(this.password, 10);
-
-    next();
+User.pre('save', async function() {
+    if (!this.isModified('password')) return;
+    this.password = await bcrypt.hash(this.password, 10);
 });
 
 module.exports = mongoose.model('User', User);

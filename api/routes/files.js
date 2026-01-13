@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const service = require('../services/files');
 const multer = require('../middlewares/files-storage');
-/*const private = require('../middlewares/private');*/
+const private = require('../middlewares/private');
 
 router.get('/', private.checkJWT, service.getAllFiles);
 router.post('/', private.checkJWT, multer, service.createOneFile);
