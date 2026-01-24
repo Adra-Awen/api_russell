@@ -21,10 +21,10 @@ exports.getAllUsers = async (req, res) => {
  * @route GET /users/:email
  */
 
-exports.getUserbyEmail = async (req, res) => {
+exports.getUserByEmail = async (req, res) => {
     const email = req.params.email;
     try {
-        const users = await User.findOne({email}).select('-password');
+        const user = await User.findOne({email}).select('-password');
     if(!user) {
         return res.status(404).json({message: "user_not_found"});
     }
@@ -36,7 +36,7 @@ exports.getUserbyEmail = async (req, res) => {
 };
 
 /**
- * @route GET /users/:email
+ * @route POST /users/:email
  */
 
 exports.createUser = async (req, res) => {
@@ -59,7 +59,7 @@ exports.createUser = async (req, res) => {
         const userWithoutPassword = user.toObject();
         delete userWithoutPassword.password;
 
-        return res.status(201).json(userWithoutPassword);
+        return res.status(200).json(userWithoutPassword);
     } catch (error) {
         return res.status(500).json(error);
     }
@@ -91,7 +91,7 @@ exports.updateUser = async (req, res) => {
         const userWithoutPassword = user.toObject();
         delete userWithoutPassword.password;
 
-        return res.status(201).json(userWithoutPassword);
+        return res.status(200).json(userWithoutPassword);
     } catch (error) {
         return res.status(500).json(error);
     }
