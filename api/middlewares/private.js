@@ -1,33 +1,40 @@
 const jwt = require('jsonwebtoken');
 const SECRET_KEY = process.env.SECRET_KEY;
 
-exports.checkJWT = async (req, res, next) => {
+/** 
+@param {import('express').Resquest} req
+@param {import('express').Response} res
+@param {import('express').NextFunction} next
+*/
+
+exports.checkJWT = (req, res, next) => {
     let token = req.headers['x-access-token'] || req.headers['authorization'];
     if (token && token.startsWith('Bearer')){
-        token = token.slice(7, token.length);
+        token = token.slice(7);
     }
 
     if (token) {
-        jwt.verify(token. SECRET_KEY, (err, decoded) => {
-            if(err){
-                return res.status(401).json('token_not_valid');
-            } else {
-                req.decoded = decoded;
-
-                const expiresIn = 24 * 60 * 60;
-                const newToken = jwt.sign({
-                    user : decoded.user
-                },
-                SECRET_KEY,
-                {
-                    expiresIn: expiresIn
-                });
-
-                res.header('Authorization', 'Bearer' + newToken);
-                newt();
-            }
-        });
-    } else {
-        return res.status (401).json('token_required');
+        return res.status(401).json({message: 'token_required'});
     }
-}
+
+    jwt.verify(token.SECRET_KEY, (err, decoded) => {
+        if(err){
+            return res.status(401).json({message: 'token_not_valid'}); 
+        }
+        
+        req.user = decoded;
+
+    const newToken = jwt.sign(
+        {
+            id: decoded.id,
+            email: decoded.email
+        },
+        SECRET_KEY,
+        { expiresIn: '24h'}
+    );
+
+    res.setHeader('Authorization', 'Bearer' + newToken);
+
+    next();
+    });
+};
