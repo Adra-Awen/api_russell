@@ -21,4 +21,4 @@ const CatwaySchema = new mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoode.model('Catway', CatwaySchema);
+module.exports = mongoose.model('Catway', CatwaySchema);
