@@ -9,15 +9,13 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 exports.checkJWT = (req, res, next) => {
     let token = req.headers['x-access-token'] || req.headers['authorization'];
-    if (token && token.startsWith('Bearer')){
-        token = token.slice(7);
-    }
-
-    if (token) {
+    if (!token) {
         return res.status(401).json({message: 'token_required'});
     }
+if (typeof token === 'string' && token.startsWith('Bearer ')) {        token = token.slice(7);
+    }
 
-    jwt.verify(token.SECRET_KEY, (err, decoded) => {
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
         if(err){
             return res.status(401).json({message: 'token_not_valid'}); 
         }
@@ -33,7 +31,7 @@ exports.checkJWT = (req, res, next) => {
         { expiresIn: '24h'}
     );
 
-    res.setHeader('Authorization', 'Bearer' + newToken);
+    res.setHeader('Authorization', 'Bearer ' + newToken);
 
     next();
     });
