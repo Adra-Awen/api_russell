@@ -26,7 +26,7 @@ exports.getCatwayById = async (req, res) => {
         if (!catway) {
             return res.status(404).json({message: 'catway_not_found'});
         }
-        return res.status(200).json(catways);
+        return res.status(200).json(catway);
     } catch (error) {
         return res.status(500).json(error);
     }
@@ -37,12 +37,12 @@ exports.getCatwayById = async (req, res) => {
  */
 
 exports.createCatway = async (req, res) => {
-    const {createNumber, catwayType, catwayState} = req.body;
+    const { catwayNumber, catwayType, catwayState } = req.body;
 
     try {
         const existing = await Catway.findOne ({catwayNumber});
 
-        if (exisiting) {
+        if (existing) {
             return res.status(409).json({message: 'catway_already_exists'});
         }
 
@@ -54,14 +54,14 @@ exports.createCatway = async (req, res) => {
 
         await catway.save();
 
-        return res.status(200).json(catway);
+        return res.status(201).json(catway);
     } catch (error) {
         return res.status(500).json(error);
     }
 };
 
 /**
- * @route PUT /cataways/:id
+ * @route PUT /catways/:id
  */
 
 exports.updateCatway = async (req, res) => {
