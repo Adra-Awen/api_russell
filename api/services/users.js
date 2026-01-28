@@ -143,7 +143,7 @@ exports.login = async (req, res) => {
             {expiresIn: '24h'}
         );
 
-        res.setHeader('Authorization', 'Bearer' + token);
+        res.setHeader('Authorization', 'Bearer ' + token);
 
         const userWithoutPassword = user.toObject();
         delete userWithoutPassword.password;
