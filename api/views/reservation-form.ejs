@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+    <meta charset="UTF-8" />
+    <title>Créer une réservation</title>
+  </head>
+  <body>
+    <h1>Créer une nouvelle réservation</h1>
+
+    <% if (error) { %>
+      <p style="color:red;"><%= error %></p>
+    <% } %>
+
+    <form action="/reservations-page/new" method="post">
+        <div>
+            <label for="clientName">Nom du client :</label>
+            <input type="text" id="clientName" name="clientName" required>
+        </div>
+        <div>
+            <label for="boatName">Nom du bâteau :</label>
+            <input type="text" id="boatName" name="boatName" required>
+        </div>
+        <div>
+            <label for="catwayNumber">Numéro du catway :</label>
+            <input type="number" id="catwayNumber" name="catwayNumber" required>
+        </div>
+
+        <button type="submit">Valider</button>
+    </form>
+    <p>
+        <a href="/reservations-page">Liste des réservations</a>
+    </p>
+    <p>
+        <a href="/catways-page">Liste des catways</a>
+    </p>
+  </body>
+</html>
