@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta chartset="UTF-8"/>
+        <title>Créer un catway</title>
+    </head>
+    <body>
+        <h1>Créer un nouveau catway</h1>
+
+        <% if (error) { %>
+            <p style="color:red;"><%=error%></p>
+        <% } %>
+
+        <form action="/catways-page/new" method="post">
+            <div>
+                <label for="catwayNumber">Numéro du catway :</label>
+                <input type="number" id="catwayNumber" name="catwayNumber" required>
+            </div>
+            <div>
+                <label for="catwayType">Type :</label>
+                <select id="catwayType" name="catwayType" required>
+                    <option value="short">Short</option>
+                    <option value="long">Long</option>
+                </select>
+            </div>
+            <div>
+                <label for="catwayState">Etat du catway :</label>
+                <textarea id="catwayState" name="catwayState" required></textarea>
+            </div>
+            <button type="submit">Créer</button>        
+        </form>
+        <p>
+            <a href="/catways-page">Retouner à la liste</a>
+        </p>
+    </body>
+</html>
