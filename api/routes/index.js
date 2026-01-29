@@ -29,31 +29,32 @@ router.get('/catways-page/new',(req, res) => {
   res.render('catway-form', {error: null});
 });
 
-router.post('/catways-page/new', async (req, res) => {
-  const { catwayNumber, catwayType, catwayState } = req.body;
+router.post('/catways-page/:id/edit', async (req, res) => {
+  const id = Number(req.params.id);
+  const { catwayState, catwayType } = req.body;
 
   try {
-    const existing = await Catway.findOne({catwayNumber});
+    const catway  = await Catway.findOne({catwayNumber: id});
 
-    if (existing) {
-      return res.status(400).render('catway-form', {
-        error: "Un catway avec ce numéro existe déjà."
-      });
+    if (!catway) {
+      return res.status(400).send('Catway introuvable');
     }
 
-    const catway = new Catway({
-      catwayNumber,
-      catwayType,
-      catwayState
-    });
+    if(catwayType !== undefined) {
+      catway.catwayType = catwayType;
+    }
+
+    if(catwayState !== undefined) {
+      catway.catwayState = catwayState;
+    }
+
+    catway.catwayState = catwayState;
 
     await catway.save();
 
     return res.redirect('/catways-page');
   } catch (error) {
-    return res.status(500).render('catway-form', {
-      error: 'Erreur serveur lors de la création.'
-    });
+    return res.status(500).send('Erreur serveur lors de la modification.');
   }
 });
 
