@@ -3,20 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <title>Catways - Port Russell</title>
+  <link href="/stylesheets/style.css" rel="stylesheet">
 </head>
 <body>
   <h1>Liste des catways</h1>
   <p>
     <a href="/catways-page/new">Ajouter un catway</a>
   </p>
+  <p>
+    <a href="/reservations-page/new">Ajouter une réservation</a>
+  </p>  
+  <p>
+    <a href="/reservations-page/">Liste des réservations</a>
+  </p>  
 
   <% if (catways && catways.length > 0) { %>
+
     <table border="1" cellpadding="8">
       <thead>
         <tr>
           <th>Numéro</th>
           <th>Type</th>
           <th>État</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -25,12 +34,91 @@
             <td><%= catway.catwayNumber %></td>
             <td><%= catway.catwayType %></td>
             <td><%= catway.catwayState %></td>
+            <td>
+            <button 
+              type="button" 
+              class="btn-edit" 
+              data-number="<%= catway.catwayNumber %>" 
+              data-type="<%= catway.catwayType %>" 
+              data-state="<%= catway.catwayState %>">
+              Modifier
+            </button>
+            <form action="/catway-page/<%=catway.catwaysNumber%>/delete" method="post" style="display:inline;"> 
+              <button type="submit" onclick="return confirm('Supprimer ce catway ?');">Supprimer</button>
+            </form>
+            </td>
           </tr>
         <% }); %>
       </tbody>
     </table>
+
   <% } else { %>
     <p>Aucun catway trouvé.</p>
   <% } %>
-</body>
-</html>
+
+  <!--MODAL-->
+
+   <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+
+      <span class="close" id="modalXClose">&times;</span>
+      <h2>Modifier le catway</h2>
+
+      <form id="editForm" method="post">
+        <div>
+          <label>Numéro :</label>
+          <span id="modalNumberDisplay"></span>
+          <input type="hidden" id="modalNumberInput" name="catwayNumber">
+        </div>
+
+        <div>
+          <label for="modalTypeInput">Type :</label>
+          <select for="modalTypeInput" id="modalTypeInput" name="catwayType">
+              <option value="">--Choisir un type--</option>
+              <option value="short">Short</option>
+              <option value="long">Long</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="modalStateInput">État :</label>
+          <textarea id="modalStateInput" name="catwayState"></textarea>
+        </div>
+
+        <button type="submit">Enregistrer</button>
+        <button type="button" id="modalClose">Annuler</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('editModal');
+    const modalNumberInput = document.getElementById('modalNumberInput');
+    const modalTypeInput = document.getElementById('modalTypeInput');
+    const modalStateInput = document.getElementById('modalStateInput');
+    const modalCloseBtn = document.getElementById('modalClose');
+    const modalXClose = document.getElementById('modalXClose');
+    const editForm = document.getElementById('editForm');
+    const modalNumberDisplay = document.getElementById('modalNumberDisplay');
+
+    document.querySelectorAll('.btn-edit').forEach(button => {
+      button.addEventListener('click', () => {
+        const number = button.dataset.number;
+        const type = button.dataset.type;
+        const state = button.dataset.state;
+
+        modalNumberDisplay.textContent = number;
+        modalNumberInput.value = number;
+        modalTypeInput.value = type;
+        modalStateInput.value = state;
+
+        editForm.action = `/catways-page/${number}/edit`;
+        modal.classList.remove('hidden');
+      });
+    });
+    function closeEditModal() {
+      modal.classList.add('hidden');
+    }
+    modalCloseBtn.addEventListener('click', closeEditModal);
+    modalXClose.addEventListener('click', closeEditModal);
+  </script>
