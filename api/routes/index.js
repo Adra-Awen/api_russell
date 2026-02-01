@@ -1,22 +1,132 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../models/user');
+const bcrypt = require('bcrypt');
 
 const usersService = require('../services/users');
 const Catway = require('../models/catway');
 const Reservation = require('../models/reservation');
 
+
+/*LOGIN*/
+function ensureAuthenticated(req, res, next) {
+  if(!req.session.user || !req.session.user) {
+    return res.redirect('/login');
+  }
+  next();
+}
+
 router.get('/', (req, res) => {
-  res.render('index', {
-    title: 'Accueil - Port Russell'
+  if (req.session.user) {
+    return res.redirect('/dashboard');
+  }
+  res.render('login', { error: null });
+});
+
+router.get('/login', (req, res) => {
+  if (req.sessionStore.user) {
+    return res.redirect('/dashboard');
+  }
+  res.render('login', {error: null});
+});
+
+router.post('/login', async (req, res) => {
+  const {email, password} = req.body;
+
+  try {
+    const user = await User.findOne({email});
+
+    if (!user) {
+      return res.status(400).render('login', {
+        error: 'Utilisateur introuvable.'
+      });
+    }
+
+    /*const isMatch = await bcrypt.compare(password, user.password);*/
+
+    if (!isMatch) {
+      return res.status(400).render('login', {
+        error: "Mot de passe incorrecte."
+      });
+    }
+
+    req.session.user = {
+      id: user._id,
+      username: user.username,
+      email: user.email
+    };
+
+    return res.redirect('/dashboard');
+  } catch (error) {
+    return res.status(500).render('login', {
+      error: 'Erreur serveur lors de la connexion.'
+    });
+  }
+});
+
+/*INSCRIPTION*/
+router.get('/register', (req, res) => {
+  if (req.session.user) {
+    return res.redirect('/dashboard');
+  }
+  res.render('register', {error: null});
+});
+
+router.post('/register', async (req, res) => {
+  const {username, email, password} = req.body;
+
+  if(!email.endsWith('@portrussell.fr')) {
+    return res.render('register', {
+      error: "L'adresse email doit se terminer par @portrussell.fr"
+    });
+  }
+
+  try {
+    const exisiting = await User.findOne({email});
+
+    if (exisiting) {
+      return res.status(400).render('register', {
+        error: 'Un compte existe déjà avec cet e-mail'
+      });
+    }
+
+    /*const hashed = await bcrypt.hash(password, 10)*/
+
+    const user = new User({
+      username,
+      email,
+      password
+    });
+
+    await user.save();
+
+    return res.redirect('/login');
+  }catch (error) {
+    console.error('Erreur inscription :', error);
+    return res.status(500).render('register', {
+      error: 'Erreur serveur lors de la création du compte.'
+    });
+  }
+});
+
+/*DASHBOARD*/
+
+router.get('/dashboard', ensureAuthenticated, (req, res) => {
+  res.render('dashboard', {
+    user: req.session.user
   });
-})
+});
 
-router.post('/login', usersService.login);
-router.get('/logout', usersService.logout);
+/*LOGOUT*/
 
+router.get('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/login');
+  });
+});
 
 /*CATWAYS*/
-router.get('/catways-page', async (req, res) => {
+router.get('/catways-page', ensureAuthenticated, async (req, res) => {
   try {
     const catways = await Catway.find().sort({catwayNumber: 1});
     const reservations = await Reservation.find();
@@ -48,7 +158,7 @@ router.get('/catways-page/new',(req, res) => {
   res.render('catway-form', {error: null});
 });
 
-router.post('/catways-page/new', async (req, res) => {
+router.post('/catways-page/new', ensureAuthenticated, async (req, res) => {
   const { catwayNumber, catwayType, catwayState } = req.body;
 
   try {
@@ -121,7 +231,7 @@ router.post('/catways-page/:id/delete', async (req, res) => {
 
 
 /*RESERVATIONS*/
-router.get('/reservations-page', async (req, res) => {
+router.get('/reservations-page', ensureAuthenticated, async (req, res) => {
   try {
     const reservations = await Reservation.find().sort({startDate: 1});
 
@@ -137,7 +247,7 @@ router.get('/reservations-page/new', (req, res) => {
   res.render('reservation-form', {error: null});
 });
 
-router.post('/reservations-page/new', async (req, res) => {
+router.post('/reservations-page/new', ensureAuthenticated, async (req, res) => {
   const { catwayNumber, clientName, boatName, startDate, endDate } = req.body;
 
   try {

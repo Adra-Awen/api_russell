@@ -14,7 +14,7 @@ const UserSchema = new Schema({
         required : [true, "L'adresse email est requise"],
         unique : true,
         lowercase : true,
-        match: [/^\S+@\S+\.\S+$/, "Adresse email invalide"]
+        match: [/^[a-zA-Z0-9._%+-]+@portrussell\.fr$/, "L'adresse email doit se terminer par @portrussell.fr"]
     },
     password: {
         type : String,

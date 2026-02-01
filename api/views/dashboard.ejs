@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de bord - Port Russell</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+<%- include('partials/header') %>        
+    <h1>Tableau de bord</h1>
+    <p>Bonjour <strong><%= currentUser.username %></strong></p>
+
+    <ul>
+        <li><a href="/catways-page">Gérer les catways</a></li>
+        <li><a href="/reservations-page">Gérer les réservations</a></li>
+    </ul>
+</body>
+</html>
