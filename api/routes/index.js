@@ -161,17 +161,36 @@ router.post('/reservations-page/new', async (req, res) => {
 
 
 router.post('/reservations-page/:id/edit', async (req, res) => {
-  const id = Number(req.params.id);
+  const { id } = req.params;
+  const { clientName, boatName, catwayNumber, startDate, endDate } = req.body;
 
   try {
-    const reservation  = await reservation.findOne({clientName: id});
+    await Reservation.findByIdAndUpdate(id, {
+      clientName,
+      boatName,
+      catwayNumber: Number(catwayNumber),
+      startDate: new Date(startDate),
+      endDate: new Date(endDate)
+    });
 
-    await reservation.save();
+    return res.redirect('/reservations-page');
+  } catch (err) {
+    return res.status(500).send("Erreur lors de la modification.");
+  }
+});
+
+router.post('/reservations-page/:id/delete', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+
+    await Reservation.findByIdAndDelete(id);
 
     return res.redirect('/reservations-page');
   } catch (error) {
-    return res.status(500).send('Erreur serveur lors de la modification.');
+    return res.status(500).send('Erreur lors de la suppression de la réservation.');
   }
 });
+
 
 module.exports = router;
