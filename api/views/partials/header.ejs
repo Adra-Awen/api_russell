@@ -1,0 +1,21 @@
+<header>
+    <nav class="main-nav">
+        <a href="/" class="logo">Port Russell</a>
+
+        <!--Si utilisateur connecté-->
+        <% if (currentUser) { %>
+        <span class="nav-user">
+            Bienvenue <strong><%= currentUser.username %></strong>
+        </span>
+    <a href="/dashboard">Tableau de bord</a>
+    <a href="/catways-page">Catways</a>
+    <a href="/reservations-page">Réservations</a>
+    <a href="/logout">Se déconnecter</a>
+
+    <!--Si utilisateur déconnecté-->
+    <%} else {%>
+        <a href="/login">Connexion</a>
+        <a href="/register">Créer un compte</a>
+    <% } %>
+    </nav>
+</header>

@@ -3,6 +3,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const logger = require('morgan');
 const path = require('path');
+const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -22,7 +23,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({extended: false}));
+app.use(session({
+    secret: '1fg!IPUcwv',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use((req, res, next) => {
+    res.locals.currentUser = req.session.user || null;
+    next();
+});
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -30,6 +39,7 @@ app.set('view engine', 'ejs');
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/catways', catwaysRouter);
+
 app.use((req, res) => {
     res.status(404).json({
         name: "API",
