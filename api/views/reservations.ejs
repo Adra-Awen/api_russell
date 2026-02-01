@@ -30,8 +30,8 @@
             <td><%= reservation.clientName %></td>
             <td><%= reservation.catwayNumber %></td>
             <td><%= reservation.boatName %></td>
-            <td><%= reservation.startDate.toISOString().slice(0,10) %></td>
-            <td><%= reservation.endDate.toISOString().slice(0,10) %></td>
+            <td><%= reservation.startDate.toLocaleDateString('fr-FR') %></td>
+            <td><%= reservation.endDate.toLocaleDateString('fr-FR') %></td>
             <td><button 
                 type="button" 
                 class="btn-edit-reservation"

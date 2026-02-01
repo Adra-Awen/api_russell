@@ -18,15 +18,31 @@ router.get('/logout', usersService.logout);
 /*CATWAYS*/
 router.get('/catways-page', async (req, res) => {
   try {
-    const catways = await Catway.find();
+    const catways = await Catway.find().sort({catwayNumber: 1});
+    const reservations = await Reservation.find();
+    const today = new Date().setHours(0, 0, 0, 0);
+    const catwaysWithStatus = catways.map(c => {
+      const hasActiveReservation = reservations.some(r =>
+        r.catwayNumber === c.catwayNumber &&
+        new Date(r.startDate).setHours(0,0,0,0) <= today &&
+        new Date(r.endDate).setHours(0,0,0,0) >= today
+      );
+
+      return {
+        ...c.toObject(),
+        status: hasActiveReservation ? "occupé" : "libre"
+      };
+    });
 
     res.render('catways', {
-      catways
+      catways: catwaysWithStatus
     });
+
   } catch (error) {
-    res.status(500).json('Erreur Serveur');
+    console.error(error);
+    res.status(500).send("Erreur serveur");
   }
-});
+});   
 
 router.get('/catways-page/new',(req, res) => {
   res.render('catway-form', {error: null});
@@ -107,7 +123,7 @@ router.post('/catways-page/:id/delete', async (req, res) => {
 /*RESERVATIONS*/
 router.get('/reservations-page', async (req, res) => {
   try {
-    const reservations = await Reservation.find();
+    const reservations = await Reservation.find().sort({startDate: 1});
 
     res.render('reservations', {
       reservations
