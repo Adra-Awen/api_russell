@@ -35,17 +35,25 @@
             <td><%= catway.catwayType %></td>
             <td><%= catway.catwayState %></td>
             <td>
-            <button 
-              type="button" 
-              class="btn-edit" 
-              data-number="<%= catway.catwayNumber %>" 
-              data-type="<%= catway.catwayType %>" 
-              data-state="<%= catway.catwayState %>">
-              Modifier
-            </button>
-            <form action="/catway-page/<%=catway.catwaysNumber%>/delete" method="post" style="display:inline;"> 
-              <button type="submit" onclick="return confirm('Supprimer ce catway ?');">Supprimer</button>
-            </form>
+              <button 
+                type="button" 
+                class="btn-edit" 
+                data-number="<%= catway.catwayNumber %>" 
+                data-type="<%= catway.catwayType %>" 
+                data-state="<%= catway.catwayState %>">
+                Modifier
+              </button>
+              <form
+                action="/catways-page/<%= catway.catwayNumber %>/delete"
+                method="post"
+                style="display:inline;">
+                <button
+                  type="submit"
+                  class="btn-delete"
+                  onclick="return confirm('Supprimer ce catway ?');">
+                  Supprimer
+                </button>
+              </form>
             </td>
           </tr>
         <% }); %>
@@ -56,7 +64,7 @@
     <p>Aucun catway trouvé.</p>
   <% } %>
 
-  <!--MODAL-->
+  <!--MODAL MODIFIER-->
 
    <div id="editModal" class="modal hidden">
     <div class="modal-content">
@@ -73,11 +81,8 @@
 
         <div>
           <label for="modalTypeInput">Type :</label>
-          <select for="modalTypeInput" id="modalTypeInput" name="catwayType">
-              <option value="">--Choisir un type--</option>
-              <option value="short">Short</option>
-              <option value="long">Long</option>
-          </select>
+          <span id="modalTypeDisplay"></span>
+          <input type="hidden" id="modalTypeInput" name="catwayType">
         </div>
 
         <div>
@@ -100,6 +105,7 @@
     const modalXClose = document.getElementById('modalXClose');
     const editForm = document.getElementById('editForm');
     const modalNumberDisplay = document.getElementById('modalNumberDisplay');
+    const modalTypeDisplay = document.getElementById('modalTypeDisplay');
 
     document.querySelectorAll('.btn-edit').forEach(button => {
       button.addEventListener('click', () => {
@@ -108,6 +114,7 @@
         const state = button.dataset.state;
 
         modalNumberDisplay.textContent = number;
+        modalTypeDisplay.textContent = type;
         modalNumberInput.value = number;
         modalTypeInput.value = type;
         modalStateInput.value = state;

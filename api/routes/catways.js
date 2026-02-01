@@ -7,6 +7,7 @@ const reservationsService = require('../services/reservations');
 
 // --- CATWAYS ---
 
+router.post('/', private.checkJWT, service.createCatway);
 router.get('/', private.checkJWT, service.getAllCatways);
 router.get('/:id', private.checkJWT, service.getCatwayById);
 router.post('/:id/reservations', private.checkJWT, reservationsService.createReservation);

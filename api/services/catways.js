@@ -1,6 +1,7 @@
 const Catway = require('../models/catway');
 
 /**
+ * Liste des catways
  * @route GET /catways
  */
 
@@ -91,17 +92,18 @@ exports.updateCatway = async (req, res) => {
  * @route DELETE /catways/:id
  */
 
+// DELETE /catways/:id
 exports.deleteCatway = async (req, res) => {
     const id = Number(req.params.id);
 
     try {
-        const catway = await Catway.findOneAndDelete({catwayNumber:id});
+        const catway = await Catway.findOneAndDelete({ catwayNumber: id });
 
         if (!catway) {
-            return res.status(404).json({message: 'catway_not_found'});
+            return res.status(404).json({ message: 'catway_not_found' });
         }
 
-        return res.status(200).json({message: 'catway_deleted'});
+        return res.status(200).json({ message: 'catway_deleted' });
     } catch (error) {
         return res.status(500).json(error);
     }

@@ -2,22 +2,26 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Catways - Port Russell</title>
+  <title>Réservations - Port Russell</title>
   <link href="/stylesheets/style.css" rel="stylesheet">
 </head>
 <body>
   <h1>Liste des réservations</h1>
+
   <p>
     <a href="/reservations-page/new">Ajouter une réservation</a>
   </p>
+  <p>
+    <a href="/catways-page">Liste des catways</a>
+  </p>
 
-  <% if (catways && catways.length > 0) { %>
+  <% if (reservations && reservations.length > 0) { %>
     <table border="1" cellpadding="8">
       <thead>
         <tr>
-          <th>Identité</th>
+          <th>Nom du client</th>
           <th>Numéro du catway</th>
-          <th>Nom du bâteau</th>
+          <th>Nom du bateau</th>
           <th>Date de début</th>
           <th>Date de fin</th>
         </tr>
@@ -25,21 +29,17 @@
       <tbody>
         <% reservations.forEach(function(reservation) { %>
           <tr>
-            <td><%= catway.catwayNumber %></td>
-            <td><%= catway.catwayType %></td>
-            <td><%= catway.catwayState %></td>
-            <td>
-              <button onclick="openEditModal('<%=catway._id%>', '<%=catway.catwayNumber%>', '<%=catway.catwayType%>', '<%=catway.catwayState%>')">Modifier</button>
-              <form action="/catways-page/<%=catway.catwayNumber%>/delete" method="post" style="display:inline;">
-                <button type="submit" onclick="return confirm('Supprimer ce catway ?');">Supprimer</button>
-              </form>
-            </td>
+            <td><%= reservation.clientName %></td>
+            <td><%= reservation.catwayNumber %></td>
+            <td><%= reservation.boatName %></td>
+            <td><%= reservation.startDate.toISOString().slice(0,10) %></td>
+            <td><%= reservation.endDate.toISOString().slice(0,10) %></td>
           </tr>
         <% }); %>
       </tbody>
     </table>
-    <% } else { %>
-        <p>Aucune réservation trouvée.</p>
-    <% } %>
+  <% } else { %>
+    <p>Aucune réservation trouvée.</p>
+  <% } %>
 </body>
 </html>
