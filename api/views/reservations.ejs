@@ -11,9 +11,6 @@
   <p>
     <a href="/reservations-page/new">Ajouter une réservation</a>
   </p>
-  <p>
-    <a href="/catways-page">Liste des catways</a>
-  </p>
 
   <% if (reservations && reservations.length > 0) { %>
     <table border="1" cellpadding="8">
@@ -24,6 +21,7 @@
           <th>Nom du bateau</th>
           <th>Date de début</th>
           <th>Date de fin</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -34,6 +32,29 @@
             <td><%= reservation.boatName %></td>
             <td><%= reservation.startDate.toISOString().slice(0,10) %></td>
             <td><%= reservation.endDate.toISOString().slice(0,10) %></td>
+            <td><button 
+                type="button" 
+                class="btn-edit-reservation"
+                data-id="<%= reservation._id %>" 
+                data-client="<%= reservation.clientName %>" 
+                data-number="<%= reservation.catwayNumber %>" 
+                data-boat="<%= reservation.boatName %>"
+                data-start="<%= reservation.startDate.toISOString().slice(0,10) %>"
+                data-end="<%= reservation.endDate.toISOString().slice(0,10) %>">
+                Modifier
+              </button>
+              <form
+                action="/reservations-page/<%= reservation._id %>/delete"
+                method="post"
+                style="display:inline;">
+                <button
+                  type="submit"
+                  class="btn-delete"
+                  onclick="return confirm('Supprimer cette réservation ?');">
+                  Supprimer
+                </button>
+              </form>
+            </td>
           </tr>
         <% }); %>
       </tbody>
@@ -41,5 +62,110 @@
   <% } else { %>
     <p>Aucune réservation trouvée.</p>
   <% } %>
+
+  <!--MODAL MODIFIER-->
+
+  <div id="editModalRes" class="modal hidden">
+  <div class="modal-content">
+
+    <span class="close" id="modalResXClose">&times;</span>
+    <h2>Modifier la réservation</h2>
+
+    <form id="editFormRes" method="post">
+      <div>
+        <label for="modalResCatwayNumberInput">Numéro de catway :</label>
+        <input
+          type="number"
+          id="modalResCatwayNumberInput"
+          name="catwayNumber"
+          required>
+      </div>
+
+      <div>
+        <label>Nom du client :</label>
+        <input
+          type="text"
+          id="modalResClientNameInput"
+          name="clientName"
+          readonly>
+      </div>
+
+      <div>
+        <label>Nom du bateau :</label>
+        <input
+          type="text"
+          id="modalResBoatNameInput"
+          name="boatName"
+          readonly>
+      </div>
+
+      <div>
+        <label for="modalResStartDateInput">Date de début :</label>
+        <input
+          type="date"
+          id="modalResStartDateInput"
+          name="startDate"
+          required>
+      </div>
+
+      <div>
+        <label for="modalResEndDateInput">Date de fin :</label>
+        <input
+          type="date"
+          id="modalResEndDateInput"
+          name="endDate"
+          required>
+      </div>
+
+      <button type="submit">Enregistrer</button>
+      <button type="button" id="modalResClose">Annuler</button>
+    </form>
+  </div>
+</div>
+
+<script>
+    const modalRes = document.getElementById('editModalRes');
+    const modalResCatwayNumberInput = document.getElementById('modalResCatwayNumberInput');
+    const modalResClientNameInput = document.getElementById('modalResClientNameInput');
+    const modalResBoatNameInput = document.getElementById('modalResBoatNameInput');
+    const modalResStartDateInput = document.getElementById('modalResStartDateInput');
+    const modalResEndDateInput = document.getElementById('modalResEndDateInput');
+    const modalResCloseBtn = document.getElementById('modalResClose');
+    const modalResXClose = document.getElementById('modalResXClose');
+    const editFormRes = document.getElementById('editFormRes');
+
+    document.querySelectorAll('.btn-edit-reservation').forEach(button => {
+      button.addEventListener('click', () => {
+        const id = button.dataset.id;
+        const client = button.dataset.client;
+        const number = button.dataset.number;
+        const boat = button.dataset.boat;
+        const start = button.dataset.start;
+        const end = button.dataset.end;
+
+        modalResCatwayNumberInput.value = number;
+        modalResClientNameInput.value = client;
+        modalResBoatNameInput.value = boat;
+        modalResStartDateInput.value = start;
+        modalResEndDateInput.value = end;
+
+        editFormRes.action = `/reservations-page/${id}/edit`;
+
+        modalRes.classList.remove('hidden');
+      });
+    });
+
+        function closeEditModalRes() {
+      modalRes.classList.add('hidden');
+    }
+
+    modalResCloseBtn.addEventListener('click', closeEditModalRes);
+    modalResXClose.addEventListener('click', closeEditModalRes);
+  </script>
+
+  <p>
+    <a href="/catways-page">Liste des catways</a>
+  </p>
+
 </body>
 </html>
