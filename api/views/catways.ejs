@@ -19,6 +19,7 @@
           <th>Numéro</th>
           <th>Type</th>
           <th>État</th>
+          <th>Statut</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -28,6 +29,9 @@
             <td><%= catway.catwayNumber %></td>
             <td><%= catway.catwayType %></td>
             <td><%= catway.catwayState %></td>
+            <td class="<%= catway.status === 'occupé' ? 'occupied' : 'free' %>">
+              <%= catway.status %>
+            </td>
             <td>
               <button 
                 type="button" 
