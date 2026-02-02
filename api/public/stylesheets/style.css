@@ -1,10 +1,73 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: "Montserrat", sans-serif;
+} 
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+  padding: 10px 10px 10px 10px;
+  margin: 10px 10px 10px 10px;
+  background-color: rgb(47, 47, 120);
+  color:aliceblue;
+  font-size: 16px;
+  border-top: 1px solid aliceblue;
+}
+
+.main-nav a {
+  color: aliceblue;
+}
+
+.nav-user{
+  margin-left: 20px;
+  font-size: 20px;
+}
+
+.logo {
+  font-size: 4rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.menu-links {
+  display: flex;
+  gap: 25px;
+  color:aliceblue;
+  margin-right: 20px;
+  text-decoration: none;
+}
+
+.menu-links a:hover {
+  font-weight: 600;
+}
+
+.nav-user {
+  margin-right: 10px;
+  font-style: italic;
 }
 
 a {
-  color: #00B7FF;
+  color: rgb(47, 47, 120);
+  text-decoration: none;
+}
+
+a:hover {
+  font-weight: 600;
+}
+
+h1, h2{
+  color: rgb(47, 47, 120);
 }
 
 .modal.hidden {

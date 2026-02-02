@@ -124,13 +124,20 @@ router.get('/logout', (req, res) => {
 });
 
 /*UTILISATEURS*/
+router.get('/users-page', ensureAuthenticated, async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.render('users', { users });
+  } catch (error) {
+    res.status(500).send('Erreur serveur');
+  }
+});
 
 router.get('/users', async (req, res) => {
   try {
     const users = await User.find().select('-password'); 
     return res.status(200).json(users);
   } catch (error) {
-    console.error('Erreur GET /users :', error);
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 });
@@ -145,7 +152,6 @@ router.get('/users/:id', async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.error('Erreur GET /users/:id :', error);
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 });
@@ -180,7 +186,6 @@ router.post('/users', async (req, res) => {
 
     return res.status(201).json(userSafe);
   } catch (error) {
-    console.error('Erreur POST /users :', error);
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 });
@@ -213,7 +218,6 @@ router.put('/users/:id', async (req, res) => {
 
     return res.status(200).json(userSafe);
   } catch (error) {
-    console.error('Erreur PUT /users/:id :', error);
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 });
@@ -228,13 +232,9 @@ router.delete('/users/:id', async (req, res) => {
 
     return res.status(200).json({ message: 'Utilisateur supprimé avec succès' });
   } catch (error) {
-    console.error('Erreur DELETE /users/:id :', error);
     return res.status(500).json({ error: 'Erreur serveur' });
   }
 });
-
-module.exports = router;
-
 
 /*CATWAYS*/
 router.get('/catways-page', ensureAuthenticated, async (req, res) => {
