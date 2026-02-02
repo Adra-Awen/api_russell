@@ -106,11 +106,34 @@ router.post('/register', async (req, res) => {
 
 /*DASHBOARD*/
 
-router.get('/dashboard', ensureAuthenticated, (req, res) => {
+router.get('/dashboard', ensureAuthenticated, async (req, res) => {
+  try {
+    const today = new Date();
+
+    const startDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() +1);
+    const reservationsToday = await Reservation.find({
+      startDate: {$lte: endDay},
+      endDate: {$gte: startDay}
+    }).sort({startDate: 1});
+
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() +1).padStart(2, '0');
+    const year = today.getFullYear();
+    const todayStr = `${day}/${month}/${year}`;
+
   res.render('dashboard', {
-    user: req.session.user
+    user: req.session.user,
+    todayStr,
+    reservationsToday
   });
+
+  }catch (error) {
+    res.status(500).send('Erreur Serveur');
+  }
 });
+
+
 
 /*LOGOUT*/
 
