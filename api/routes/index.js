@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
 const bcrypt = require('bcrypt');
 
 const usersService = require('../services/users');
 const Catway = require('../models/catway');
 const Reservation = require('../models/reservation');
+const User = require('../models/user');
 
 
 /*LOGIN*/
 function ensureAuthenticated(req, res, next) {
-  if(!req.session.user || !req.session.user) {
+  if(!req.session || !req.session.user) {
     return res.redirect('/login');
   }
   next();
@@ -24,7 +24,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  if (req.sessionStore.user) {
+  if (req.session && req.session.user) {
     return res.redirect('/dashboard');
   }
   res.render('login', {error: null});
@@ -42,7 +42,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    /*const isMatch = await bcrypt.compare(password, user.password);*/
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(400).render('login', {
@@ -90,8 +90,6 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    /*const hashed = await bcrypt.hash(password, 10)*/
-
     const user = new User({
       username,
       email,
@@ -124,6 +122,119 @@ router.get('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
+
+/*UTILISATEURS*/
+
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find().select('-password'); 
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error('Erreur GET /users :', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+router.get('/users/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur introuvable' });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error('Erreur GET /users/:id :', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+router.post('/users', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'username, email et password sont obligatoires.' });
+    }
+
+    if (!email.endsWith('@portrussell.fr')) {
+      return res.status(400).json({ error: "L'adresse email doit se terminer par @portrussell.fr" });
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ error: 'Un compte existe déjà avec cet e-mail.' });
+    }
+
+    const user = new User({
+      username,
+      email,
+      password
+    });
+
+    await user.save();
+
+    const userSafe = user.toObject();
+    delete userSafe.password;
+
+    return res.status(201).json(userSafe);
+  } catch (error) {
+    console.error('Erreur POST /users :', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+router.put('/users/:id', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utilisateur introuvable' });
+    }
+
+    if (username !== undefined) user.username = username;
+    if (email !== undefined) {
+      if (!email.endsWith('@portrussell.fr')) {
+        return res.status(400).json({ error: "L'adresse email doit se terminer par @portrussell.fr" });
+      }
+      user.email = email;
+    }
+    if (password !== undefined && password !== '') {
+      user.password = password;
+    }
+
+    await user.save(); 
+
+    const userSafe = user.toObject();
+    delete userSafe.password;
+
+    return res.status(200).json(userSafe);
+  } catch (error) {
+    console.error('Erreur PUT /users/:id :', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const deleted = await User.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Utilisateur introuvable' });
+    }
+
+    return res.status(200).json({ message: 'Utilisateur supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur DELETE /users/:id :', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+module.exports = router;
+
 
 /*CATWAYS*/
 router.get('/catways-page', ensureAuthenticated, async (req, res) => {
