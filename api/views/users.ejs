@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Utilisateurs - Port Russell</title>
+  <link href="/stylesheets/style.css" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/header') %>
+  <h1>Gestion des utilisateurs</h1>
+  
+
+<p>
+  <a href="/users-page/new">Ajouter un utilisateur</a>
+</p>
+
+<table border="1" cellpadding="8">
+  <thead>
+    <tr>
+      <th>Nom</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% users.forEach(user => { %>
+      <tr>
+        <td><%= user.username %></td>
+        <td><%= user.email %></td>
+        <td>
+          <form action="/users-page/<%= user._id %>/delete" method="post" style="display:inline;">
+            <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?');">
+              Supprimer
+            </button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>    
+  </tbody>
+</table>
+
+</body>
+</html>
