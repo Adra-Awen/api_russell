@@ -9,7 +9,7 @@
 <%- include('partials/header') %>        
     <h1>Tableau de bord</h1>
     <p>Bonjour <strong><%= currentUser.username %></strong></p>
-    <p>Nous sommes le <strong><%= new Date();%></strong></p>
+    <p>Nous sommes le <strong><%= todayStr %></strong></p>
     <h2>Gestion</h2>
         <ul>
             <li><a href="/catways-page">Gérer les catways</a></li>
@@ -17,5 +17,31 @@
             <li><a href="/users-page">Gérer les utilisateurs</a></li>
         </ul>
     <h2>Réservations en cours</h2>
+    <% if (reservationsToday && reservationsToday.length > 0) { %>
+    <table border="1" cellpadding="8">
+      <thead>
+        <tr>
+          <th>Catway</th>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Début</th>
+          <th>Fin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reservationsToday.forEach(res => { %>
+          <tr>
+            <td><%= res.catwayNumber %></td>
+            <td><%= res.clientName %></td>
+            <td><%= res.boatName %></td>
+            <td><%= res.startDate.toLocaleDateString('fr-FR') %></td>
+            <td><%= res.endDate.toLocaleDateString('fr-FR') %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>Aucune réservation en cours pour aujourd'hui.</p>
+  <% } %>
 </body>
 </html>
