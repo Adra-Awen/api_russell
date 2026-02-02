@@ -11,8 +11,10 @@
   
 
 <p>
-  <a href="/users-page/new">Ajouter un utilisateur</a>
+  <a href="/register">Ajouter un utilisateur</a>
 </p>
+
+<% if (users && users.length > 0) { %>
 
 <table border="1" cellpadding="8">
   <thead>
@@ -29,16 +31,108 @@
         <td><%= user.username %></td>
         <td><%= user.email %></td>
         <td>
+            <button 
+                type="button" 
+                class="btn-edit-user" 
+                data-id="<%= user._id %>" 
+                data-username="<%= user.username %>" 
+                data-email="<%= user.email %>" >
+                Modifier
+              </button>
           <form action="/users-page/<%= user._id %>/delete" method="post" style="display:inline;">
-            <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?');">
+            <button 
+                type="submit" 
+                class="btn-delete"
+                onclick="return confirm('Supprimer cet utilisateur ?');">
               Supprimer
             </button>
           </form>
         </td>
       </tr>
-    <% }) %>    
+    <% }) %>   
   </tbody>
 </table>
 
+  <% } else { %>
+    <p>Aucun utilisateur trouvé.</p>
+  <% } %>
+
+<!--MODAL MODIFIER-->
+
+<div id="editUserModal" class="modal hidden">
+  <div class="modal-content">
+
+    <span class="close" id="modalUserXClose">&times;</span>
+    <h2>Modifier l'utilisateur</h2>
+
+    <form id="editUserForm" method="post">
+
+      <div>
+        <label for="modalUsernameInput">Nom :</label>
+        <input 
+          type="text" 
+          id="modalUsernameInput" 
+          name="username"
+          required>
+      </div>
+
+      <div>
+        <label>Email :</label>
+        <input 
+          type="email" 
+          id="modalEmailInput"
+          name="email"
+          required>
+      </div>
+
+      <div>
+        <label for="modalPasswordInput">Nouveau mot de passe :</label>
+        <input 
+          type="password"
+          id="modalPasswordInput"
+          name="password">
+      </div>
+
+      <button type="submit">Enregistrer</button>
+      <button type="button" id="modalUserClose">Annuler</button>
+
+    </form>
+  </div>
+</div>
+<script>
+  const userModal = document.getElementById('editUserModal');
+
+  const modalUsernameInput = document.getElementById('modalUsernameInput');
+  const modalEmailInput = document.getElementById('modalEmailInput');
+  const modalPasswordInput = document.getElementById('modalPasswordInput');
+
+  const modalUserClose = document.getElementById('modalUserClose');
+  const modalUserXClose = document.getElementById('modalUserXClose');
+  const editUserForm = document.getElementById('editUserForm');
+
+  document.querySelectorAll('.btn-edit-user').forEach(button => {
+    button.addEventListener('click', () => {
+
+      const id = button.dataset.id;
+      const username = button.dataset.username;
+      const email = button.dataset.email;
+
+      modalUsernameInput.value = username;
+      modalEmailInput.value = email;
+      modalPasswordInput.value = ''; 
+
+      editUserForm.action = `/users/${id}/edit`;
+
+      userModal.classList.remove('hidden');
+    });
+  });
+
+  function closeUserModal() {
+    userModal.classList.add('hidden');
+  }
+
+  modalUserClose.addEventListener('click', closeUserModal);
+  modalUserXClose.addEventListener('click', closeUserModal);
+</script>
 </body>
 </html>

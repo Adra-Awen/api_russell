@@ -66,9 +66,6 @@ router.post('/login', async (req, res) => {
 
 /*INSCRIPTION*/
 router.get('/register', (req, res) => {
-  if (req.session.user) {
-    return res.redirect('/dashboard');
-  }
   res.render('register', {error: null});
 });
 
@@ -133,7 +130,7 @@ router.get('/users-page', ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.get('/users', async (req, res) => {
+router.get('/users-page', async (req, res) => {
   try {
     const users = await User.find().select('-password'); 
     return res.status(200).json(users);
@@ -142,7 +139,7 @@ router.get('/users', async (req, res) => {
   }
 });
 
-router.get('/users/:id', async (req, res) => {
+router.get('/users-page/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
 
@@ -156,41 +153,35 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
-router.post('/users', async (req, res) => {
-  try {
+router.post('/users-page/:id/edit', async (req, res) => {
+    const {id} = req.params;
     const { username, email, password } = req.body;
 
+    try {
+      const user = await User.findById(id);
+
+      if(!user) {
+        return res.status(404).send('Utilisateur introuvable');
+      }
+
+      user.username = username;
+      user.email = email;
+      
+      if (password && password.length >0) {
+        user.password = password;
+      }
+
+      await user.save();
+      res.redirect('/users-page');
+    } catch (error) {
+      res.status(500).send("Erreur lors de la modification de l'utilisateur")
+    }
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'username, email et password sont obligatoires.' });
     }
-
-    if (!email.endsWith('@portrussell.fr')) {
-      return res.status(400).json({ error: "L'adresse email doit se terminer par @portrussell.fr" });
-    }
-
-    const existing = await User.findOne({ email });
-    if (existing) {
-      return res.status(400).json({ error: 'Un compte existe déjà avec cet e-mail.' });
-    }
-
-    const user = new User({
-      username,
-      email,
-      password
-    });
-
-    await user.save();
-
-    const userSafe = user.toObject();
-    delete userSafe.password;
-
-    return res.status(201).json(userSafe);
-  } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur' });
-  }
 });
 
-router.put('/users/:id', async (req, res) => {
+router.put('/users-page/:id', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -222,19 +213,14 @@ router.put('/users/:id', async (req, res) => {
   }
 });
 
-router.delete('/users/:id', async (req, res) => {
+router.post('/users-page/:id/delete', async (req, res) => {
   try {
-    const deleted = await User.findByIdAndDelete(req.params.id);
-
-    if (!deleted) {
-      return res.status(404).json({ error: 'Utilisateur introuvable' });
+    await User.findByIdAndDelete(req.params.id);
+    return res.redirect('/users-page');
+    } catch (error) {
+    res.status(500).send("Erreur lors de la suppression de l'utilisateur.");
     }
-
-    return res.status(200).json({ message: 'Utilisateur supprimé avec succès' });
-  } catch (error) {
-    return res.status(500).json({ error: 'Erreur serveur' });
-  }
-});
+  });
 
 /*CATWAYS*/
 router.get('/catways-page', ensureAuthenticated, async (req, res) => {
