@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajouter un utilisateur</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+
+<%- include('partials/header') %>
+
+<h1>Ajouter un utilisateur</h1>
+
+<% if (error) { %>
+<p class="error"><%= error %></p>
+<% } %>
+
+<form action="/users-page/new" method="post">
+  <div>
+    <label for="username">Nom utilisateur :</label>
+    <input type="text" name="username" id="username" required>
+  </div>
+  <div>
+    <label for="email">Email (doit finir par @portrussell.fr) :</label>
+    <input type="email" name="email" id="email" required>
+  </div>
+  <div>
+    <label for="password">Mot de passe :</label>
+    <input type="password" name="password" id="password" required>
+  </div>
+  <button type="submit">Créer</button>
+</form>
+<p>
+  <a href="/users-page">Retour à la liste</a>
+</p>
+</body>
+</html>
