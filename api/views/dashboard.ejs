@@ -9,10 +9,13 @@
 <%- include('partials/header') %>        
     <h1>Tableau de bord</h1>
     <p>Bonjour <strong><%= currentUser.username %></strong></p>
-
-    <ul>
-        <li><a href="/catways-page">Gérer les catways</a></li>
-        <li><a href="/reservations-page">Gérer les réservations</a></li>
-    </ul>
+    <p>Nous sommes le <strong><%= new Date();%></strong></p>
+    <h2>Gestion</h2>
+        <ul>
+            <li><a href="/catways-page">Gérer les catways</a></li>
+            <li><a href="/reservations-page">Gérer les réservations</a></li>
+            <li><a href="/users-page">Gérer les utilisateurs</a></li>
+        </ul>
+    <h2>Réservations en cours</h2>
 </body>
 </html>

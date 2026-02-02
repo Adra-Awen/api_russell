@@ -10,4 +10,3 @@ router.post('/id/reservation', private.checkJWT, reservationsService.createReser
 router.put('/:id/reservations/:idReservation', private.checkJWT, reservationsService.updateReservation);
 router.delete('/:id/reservations/:idReservation', private.checkJWT, reservationsService.deleteReservation);
 
-module.exports = router;
