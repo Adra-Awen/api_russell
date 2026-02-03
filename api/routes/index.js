@@ -386,6 +386,18 @@ router.post('/reservations-page/new', ensureAuthenticated, async (req, res) => {
       });
     }
 
+    const existing = await Reservation.findOne({
+      catwayNumber: Number(catwayNumber),
+      startDate: {$lt: end},
+      endDate: {$gt: start},
+    });
+
+    if(existing) {
+      return res.status(400).render('reservation-form', {
+        error: 'Une réservation existe déjà sur ce catway à cette période'
+      });
+    }
+
     const reservation = new Reservation({
       catwayNumber: Number(catwayNumber),
       clientName,
