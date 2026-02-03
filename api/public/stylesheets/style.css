@@ -70,6 +70,20 @@ h1, h2{
   color: rgb(47, 47, 120);
 }
 
+form  div{
+  margin: 20px 20px;
+}
+
+button{
+  margin-left: 20px;
+  background-color: rgb(47, 47, 120);
+  color: aliceblue;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 .modal.hidden {
   display: none;
 }
