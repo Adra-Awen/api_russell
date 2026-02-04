@@ -1,5 +1,10 @@
+const mongoose = require('mongoose');
+
+const clientOptions = {
+    dbName : 'apinode'
+};
+
 exports.initClientDbConnection = async () => {
-    
   try {
     console.log('URL_MONGO dans Render =', process.env.URL_MONGO);
 
