@@ -17,6 +17,26 @@ mongodb.initClientDbConnection();
 
 const app = express();
 
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API du Port Russell',
+      version: '1.0.0',
+      description: 'Documentation générée automatiquement (utilisateurs, réservvations, catways)',
+    },
+    servers: [
+        {
+            url: 'http://localhost:3000',
+        },
+    ],
+  },
+  apis: [path.join(__dirname, './routes/*.js')], 
+};
+const swaggerDoc = swaggerJsdoc(swaggerOptions);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
 app.use(logger('dev'));
 app.use(cors({
     exposedHeaders: ["Authorization"],
@@ -38,19 +58,6 @@ app.use((req, res, next) => {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'API du Port Russell',
-      version: '1.0.0',
-      description: 'Documentation générée automatiquement (utilisateurs, réservvations, catways)',
-    },
-  },
-  apis: ['./routes/*.js'], 
-};
-const swaggerDocs = swaggerJsdoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
