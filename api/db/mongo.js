@@ -6,9 +6,9 @@ const clientOptions = {
 
 exports.initClientDbConnection = async () => {
   try {
-    console.log('URL_MONGO dans Render =', process.env.URL_MONGO);
+    const uri = 'bauvaisn_db_user:gJnZnvERsSgTDqVe@portrussel.s9mvii2.mongodb.net/?appName=portRussel';
 
-    await mongoose.connect(process.env.URL_MONGO, clientOptions);
+    await mongoose.connect(uri, clientOptions);
     console.log('Connecté');
   } catch (error) {
     console.log('Erreur connexion Mongo :', error);
