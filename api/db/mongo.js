@@ -1,15 +1,12 @@
-const mongoose = require('mongoose');
-
-const clientOptions = {
-    dbName : 'apinode'
-};
-
 exports.initClientDbConnection = async () => {
-    try{
-        await mongoose.connect(process.env.URL_MONGO, clientOptions)
-        console.log('Connecté');
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
-}
+    
+  try {
+    console.log('URL_MONGO dans Render =', process.env.URL_MONGO);
+
+    await mongoose.connect(process.env.URL_MONGO, clientOptions);
+    console.log('Connecté');
+  } catch (error) {
+    console.log('Erreur connexion Mongo :', error);
+    throw error;
+  }
+};
